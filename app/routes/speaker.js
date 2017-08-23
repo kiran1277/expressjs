@@ -7,7 +7,21 @@ var express = require('express');
 var router = express.Router();
 
 router.get("/speakers", function(req,res){
-    var info = ' ';
+
+var data = req.app.get('appData');
+var pagePhotos = [];
+var pageSpeakers = data.speakers;
+data.speakers.forEach(function(item){
+    pagePhotos = pagePhotos.concat(item.artwork);
+});
+
+    res.render('speakers',{
+        pageTitle:'Speakers',
+        artwork: pagePhotos,
+        speakers: pageSpeakers,
+        pageID: 'speakerList'
+    });
+    /*var info = ' ';
     var dataFile = req.app.get('appData');
     dataFile.speakers.forEach(function(item){
         info += `
@@ -23,12 +37,30 @@ router.get("/speakers", function(req,res){
         <h1>Welcome from express</h1>
         ${info}
         <script src="/reload/reload.js"></script>
-`);
+`);*/
         
 });
 
 router.get("/speakers/:speakerid", function(req,res){
-    var dataFile = req.app.get('appData');
+    var data = req.app.get('appData');
+    var pagePhotos = [];
+    var pageSpeakers = [];
+    data.speakers.forEach(function(item){
+        if(item.shortname == req.params.speakerid){
+        pageSpeakers.push(item);
+        pagePhotos = pagePhotos.concat(item.artwork);
+        }
+    });
+
+        res.render('speakers',{
+            pageTitle:'Speakers Info',
+            artwork: pagePhotos,
+            speakers: pageSpeakers,
+            pageID: 'speakerDetail'
+        });
+
+
+    /*var dataFile = req.app.get('appData');
     var speaker = dataFile.speakers[req.params.speakerid];
     res.send(`
          <link rel="stylesheet" type="text/css" href = "/css/style.css">
@@ -37,7 +69,7 @@ router.get("/speakers/:speakerid", function(req,res){
         <img src = "/images/speakers/${speaker.shortname}_tn.jpg" alt="speaker">
         <p>${speaker.summary}</p> 
         <script src="/reload/reload.js"></script>
-`);
+`);*/
         
 });
 
